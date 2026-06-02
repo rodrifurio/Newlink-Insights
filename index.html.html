@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mundial + Ecosistema Turístico Argentino · Visibilidad en IA</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;700;800&display=swap');
+:root{
+  --bg:#0e0e10;--bg2:#171719;--panel:#1c1c1f;--panel2:#242427;
+  --yellow:#FFDD00;--yellow-dim:#c9af14;
+  --ink:#f5f3ea;--muted:#9a978d;--line:#2e2e32;--soft:#cbc8bd;
+  --pos-good:#FFDD00;--pos-mid:#8f8a72;--pos-low:#54525a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Effra','Hanken Grotesk',sans-serif;font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased}
+.b{font-weight:700}.l{font-weight:300}
+.wrap{max-width:1180px;margin:0 auto;padding:0 48px}
+.mono{font-weight:700;text-transform:uppercase;letter-spacing:.2em;font-size:.7rem;color:var(--muted)}
+
+/* HERO */
+header{padding:72px 0 48px;border-bottom:1px solid var(--line)}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:60px}
+.logo{display:flex;align-items:center}
+.logo-link{display:inline-flex;text-decoration:none}
+.foot-link{color:var(--yellow);text-decoration:none;font-weight:700;font-size:.8rem;letter-spacing:.02em}
+.foot-link:hover{text-decoration:underline}
+.logo img{height:30px;width:auto;display:block}
+.kicker{color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.2em;font-size:.7rem}
+h1{font-weight:800;font-size:4rem;line-height:1;letter-spacing:-.03em;margin:16px 0 22px}
+h1 .y{color:var(--yellow)}
+.thesis{font-weight:300;font-size:1.25rem;color:var(--soft);max-width:780px;line-height:1.5}
+.thesis b{font-weight:700;color:var(--ink)}
+
+/* STRATEGY TIMELINE */
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-top:8px}
+.tl-step{background:var(--panel);padding:24px 22px}
+.tl-step .when{font-weight:700;font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;color:var(--yellow);margin-bottom:10px}
+.tl-step .ttl{font-weight:700;font-size:1.05rem;margin-bottom:8px;color:var(--ink)}
+.tl-step.now .ttl::after{content:' ●';color:var(--yellow);font-size:.8rem}
+.tl-step p{font-size:.85rem;color:var(--muted);line-height:1.45}
+.tl-step .tag{display:inline-block;margin-top:12px;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 9px;border-radius:3px}
+.tag-done{background:var(--yellow);color:#0e0e10}
+.tag-pending{background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+.kpi{padding:32px 26px;background:var(--bg)}
+.kpi .lbl{font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:.64rem;color:var(--muted)}
+.kpi .big{font-weight:800;font-size:2.9rem;line-height:1;letter-spacing:-.03em;margin:10px 0 4px}
+.kpi .big.y{color:var(--yellow)}
+.kpi .foot{font-weight:300;font-size:.82rem;color:var(--muted)}
+.insight-banner{display:flex;align-items:center;gap:32px;margin-top:34px;background:linear-gradient(180deg,var(--bg2),var(--panel));border-left:3px solid var(--yellow);border-radius:4px;padding:32px 36px}
+.insight-banner .ib-num{font-weight:800;font-size:4.6rem;line-height:.9;letter-spacing:-.04em;color:var(--yellow);flex-shrink:0}
+.insight-banner .ib-num span{font-size:2.2rem;font-weight:300;font-style:italic;color:var(--soft);margin:0 2px}
+.insight-banner .ib-lbl{font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:.7rem;color:var(--muted);margin-bottom:10px}
+.insight-banner .ib-text{font-weight:300;font-size:1.05rem;color:var(--soft);line-height:1.55;max-width:640px}
+.insight-banner .ib-text b{font-weight:700;color:var(--ink)}
+.insight-banner .ib-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.insight-banner .ib-card{background:rgba(255,255,255,.02);border:1px solid var(--line);border-top:2px solid;border-radius:5px;padding:14px 16px}
+.insight-banner .ic-t{font-weight:700;font-size:.82rem;letter-spacing:.01em;margin-bottom:5px}
+.insight-banner .ic-d{font-weight:300;font-size:.8rem;color:var(--soft);line-height:1.45}
+.insight-banner .ib-foot{font-weight:300;font-size:.88rem;color:var(--muted);line-height:1.5;margin-top:16px}
+
+/* SECTIONS */
+section{padding:64px 0;border-bottom:1px solid var(--line)}
+.layer-tag{display:inline-flex;align-items:center;gap:10px;margin-bottom:18px}
+.layer-tag .num{font-weight:800;font-size:.8rem;background:var(--yellow);color:#0e0e10;padding:3px 10px;border-radius:3px;letter-spacing:.04em}
+.layer-tag .txt{font-weight:700;text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;color:var(--muted)}
+h2{font-weight:800;font-size:2.5rem;line-height:1.05;letter-spacing:-.025em;margin-bottom:14px}
+h2 .y{color:var(--yellow)}
+h2 em{font-style:italic;font-weight:300;color:var(--soft)}
+.lead{font-weight:300;font-size:1.08rem;color:var(--soft);max-width:780px;margin-bottom:34px;line-height:1.55}
+.lead b{font-weight:700;color:var(--ink)}
+
+.chart-card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:30px}
+.chart-card.accent{border-top:3px solid var(--yellow)}
+.chart-title{font-weight:700;font-size:1.06rem;margin-bottom:5px}
+.chart-note{font-weight:300;font-size:.85rem;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.chart-method{font-weight:300;font-size:.74rem;color:var(--muted);line-height:1.5;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+.prompt-bar{display:flex;align-items:baseline;gap:14px;background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--yellow);border-radius:4px;padding:14px 18px;margin-bottom:18px;flex-wrap:wrap}
+.prompt-bar .pb-label{font-weight:700;font-size:.62rem;text-transform:uppercase;letter-spacing:.14em;color:var(--yellow);white-space:nowrap}
+.prompt-bar .pb-text{font-weight:300;font-size:1rem;color:var(--ink);font-style:italic}
+.prompt-bar .pb-text::before{content:'\201C'}.prompt-bar .pb-text::after{content:'\201D'}
+.chart-box{position:relative;height:540px}
+
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:24px}
+.tab{font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;padding:9px 15px;border:1px solid var(--line);background:var(--bg2);cursor:pointer;color:var(--muted);transition:all .15s;border-radius:3px}
+.tab:hover{border-color:var(--yellow-dim);color:var(--ink)}
+.tab.active{background:var(--yellow);color:#0e0e10;border-color:var(--yellow)}
+.quad-legend{display:flex;gap:24px;flex-wrap:wrap;margin-top:18px;font-weight:300;font-size:.82rem;color:var(--muted)}
+.quad-legend span{display:flex;align-items:center;gap:8px}
+.legend-toggle{margin-top:16px;background:var(--bg2);border:1px solid var(--line);color:var(--soft);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;padding:9px 16px;border-radius:3px;cursor:pointer;transition:all .15s}
+.legend-toggle:hover{border-color:var(--yellow-dim);color:var(--ink)}
+.legend-drawer{display:none}
+.legend-drawer.open{margin-top:14px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px 18px}
+.lp-head{grid-column:1/-1;font-weight:700;font-size:.64rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px}
+.lp-item{display:flex;align-items:baseline;gap:8px;padding:4px 0;font-size:.8rem;line-height:1.3}
+.lp-num{font-weight:700;font-size:.66rem;color:#0e0e10;background:#7d7a70;min-width:18px;height:18px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.lp-item.leader .lp-num{background:var(--yellow)}
+.lp-name{color:var(--soft);flex:1;min-width:0}
+.lp-item.leader .lp-name{color:var(--ink);font-weight:700}
+.lp-pos{color:var(--muted);font-size:.72rem;white-space:nowrap}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+/* PLACEHOLDER capa 1 */
+.placeholder{background:repeating-linear-gradient(45deg,var(--panel),var(--panel) 12px,var(--panel2) 12px,var(--panel2) 24px);border:1px dashed var(--line);border-radius:4px;padding:54px 40px;text-align:center}
+.placeholder .ic{font-size:2rem;margin-bottom:14px;opacity:.5}
+.placeholder h4{font-weight:700;font-size:1.15rem;margin-bottom:10px;color:var(--ink)}
+.placeholder p{font-weight:300;color:var(--muted);max-width:560px;margin:0 auto 8px;font-size:.92rem}
+.fields{background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:24px 28px;margin-top:24px;text-align:left}
+.fields h5{font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--yellow);margin-bottom:14px}
+.fields ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 28px}
+.fields li{font-size:.86rem;color:var(--soft);padding-left:18px;position:relative;line-height:1.4}
+.fields li::before{content:'→';position:absolute;left:0;color:var(--yellow-dim)}
+.demo-banner{background:rgba(255,221,0,.08);border:1px solid var(--yellow-dim);border-radius:4px;padding:12px 18px;margin-bottom:24px;font-size:.82rem;color:var(--yellow-dim);font-weight:500}
+.l1grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.l1card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:24px 26px;display:flex;flex-direction:column}
+.l1card.full{grid-column:1 / -1}
+.l1card .l1ic{font-size:1.3rem;margin-bottom:10px}
+.l1card .l1cat{font-weight:700;font-size:.64rem;text-transform:uppercase;letter-spacing:.14em;color:var(--yellow);margin-bottom:8px}
+.l1card .l1q{font-weight:700;font-size:1.06rem;line-height:1.25;color:var(--ink);margin-bottom:16px}
+.l1bar{display:flex;height:28px;border-radius:3px;overflow:hidden;background:var(--bg2);margin-bottom:10px}
+.l1seg{display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.l1seg.user{background:#5b7fb9;color:#fff}
+.l1seg.media{background:#9a978d;color:#1a1a18}
+.l1seg.brand{background:var(--yellow);color:#0e0e10}
+.l1seg.asp{background:#5b7fb9;color:#fff}
+.l1seg.op{background:#b95b6b;color:#fff}
+.l1legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.7rem;color:var(--muted);margin-bottom:14px}
+.l1legend span{display:flex;align-items:center;gap:6px}
+.l1legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
+.l1read{font-weight:300;font-size:.9rem;color:var(--soft);line-height:1.5;margin-bottom:14px}
+.l1cierre{margin-top:auto;font-style:italic;font-weight:400;font-size:.96rem;color:var(--ink);border-top:1px solid var(--line);padding-top:14px}
+.l1cierre::before{content:'\201C';color:var(--yellow)}.l1cierre::after{content:'\201D';color:var(--yellow)}
+
+/* CAPA 3 narrativa */
+.narrative{display:grid;gap:14px}
+.narr-step{background:var(--panel);border-left:3px solid var(--line);border-radius:0 4px 4px 0;padding:20px 26px}
+.narr-step.s1{border-left-color:#5b7fb9}
+.narr-step.s2{border-left-color:var(--yellow)}
+.narr-step.s3{border-left-color:#b95b6b}
+.narr-step .role{font-weight:700;font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px}
+.narr-step p{font-weight:300;color:var(--soft);font-size:.98rem}
+.narr-step.s3 p{font-style:italic;color:var(--ink);font-weight:400}
+
+.formula{background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:22px 26px;margin:8px 0 30px;font-weight:300;color:var(--soft);font-size:1rem;text-align:center;line-height:1.7}
+.formula b{color:var(--yellow);font-weight:700}
+
+.gap-table{width:100%;border-collapse:collapse;margin-top:8px}
+.gap-table th{text-align:left;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--line)}
+.gap-table td{padding:14px 16px;border-bottom:1px solid var(--line);font-size:.92rem;color:var(--soft)}
+.gap-table td.prog{font-weight:700;color:var(--yellow)}
+.flow{display:flex;flex-direction:column;gap:10px}
+.flow-row{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:stretch;gap:8px}
+.flow-cell{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:13px 15px;font-size:.86rem;color:var(--soft);line-height:1.35;display:flex;flex-direction:column;justify-content:center}
+.flow-lbl{font-weight:700;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}
+.flow-cell.c-signal{border-left:3px solid #5b7fb9}.flow-cell.c-signal .flow-lbl{color:#7da0d4}
+.flow-cell.c-diag{border-left:3px solid #b95b6b}.flow-cell.c-diag .flow-lbl{color:#d48a96}
+.flow-cell.c-lever{border-left:3px solid #5DCAA5}.flow-cell.c-lever .flow-lbl{color:#7fd9bb}
+.flow-cell.c-prog{border-left:3px solid var(--yellow)}.flow-cell.c-prog{color:var(--ink);font-weight:700}.flow-cell.c-prog .flow-lbl{color:var(--yellow)}
+.flow-arrow{display:flex;align-items:center;color:var(--muted);font-size:1.1rem}
+
+.method{background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:22px 26px;margin-top:26px;font-weight:300;font-size:.86rem;color:#bdbab0;line-height:1.6}
+.method b{font-weight:700;color:var(--ink)}
+footer{padding:48px 0 80px;color:var(--muted);font-weight:300;font-size:.85rem}
+.insights{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
+.ins{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--yellow);border-radius:4px;padding:24px 22px}
+.ins-n{font-family:'Effra','Hanken Grotesk',sans-serif;font-weight:800;font-size:1.6rem;color:var(--yellow);letter-spacing:-.02em;margin-bottom:12px}
+.ins-h{font-weight:700;font-size:1.05rem;color:var(--ink);line-height:1.25;margin-bottom:10px}
+.ins p{font-weight:300;font-size:.9rem;color:var(--soft);line-height:1.5}
+.dims{margin-top:28px;display:flex;flex-direction:column;gap:10px}
+.dim{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.dim summary{list-style:none;cursor:pointer;padding:18px 22px;font-weight:800;font-size:1.2rem;letter-spacing:-.01em;color:var(--ink);display:flex;align-items:center;gap:11px;transition:background .15s}
+.dim summary::-webkit-details-marker{display:none}
+.dim summary::after{content:'+';margin-left:auto;font-weight:300;font-size:1.5rem;color:var(--muted);transition:transform .2s}
+.dim[open] summary::after{content:'−'}
+.dim summary:hover{background:var(--panel2)}
+.dim .dot{width:11px;height:11px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dim p{font-weight:300;font-size:.92rem;color:var(--soft);line-height:1.55;padding:0 22px 20px;margin:0}
+.cta{background:var(--yellow);border-radius:6px;padding:48px 44px;margin:8px 0 8px;text-align:center}
+.cta-kicker{font-weight:700;text-transform:uppercase;letter-spacing:.2em;font-size:.7rem;color:#0e0e10;opacity:.65;margin-bottom:14px}
+.cta-h{font-weight:800;font-size:2.3rem;line-height:1.05;letter-spacing:-.02em;color:#0e0e10;margin-bottom:14px}
+.cta-h .y{color:#0e0e10;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
+.cta-sub{font-weight:300;font-size:1.05rem;color:#1a1a18;max-width:620px;margin:0 auto 28px;line-height:1.5}
+.cta-btn{display:inline-block;background:#0e0e10;color:var(--yellow);font-weight:800;font-size:1.05rem;text-decoration:none;padding:16px 34px;border-radius:4px;transition:transform .12s,background .12s}
+.cta-btn:hover{background:#000;transform:translateY(-2px)}
+
+@media(max-width:900px){
+  .wrap{padding:0 22px}h1{font-size:2.5rem}
+  .kpis,.timeline{grid-template-columns:repeat(2,1fr)}
+  .fields ul{grid-template-columns:1fr}.chart-box{height:440px}
+  .l1grid{grid-template-columns:1fr}
+  .flow-row{grid-template-columns:1fr;gap:4px}
+  .flow-arrow{transform:rotate(90deg);justify-content:center;padding:2px 0}
+  .sys-plus{padding:4px 0}
+  .cta{padding:36px 24px}.cta-h{font-size:1.7rem}
+
+  .insights{grid-template-columns:1fr;gap:8px}
+}
+@media(max-width:600px){
+  .wrap{padding:0 16px}
+  h1{font-size:2.1rem}
+  .kpis,.timeline{grid-template-columns:1fr}
+  .chart-card{padding:18px 14px}
+  .chart-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .chart-box{height:460px;width:680px}
+  #scatterTabs{flex-wrap:wrap;gap:6px}
+  #scatterTabs .tab{font-size:.72rem;padding:7px 10px}
+  .legend-drawer.open{grid-template-columns:1fr}
+  .insight-banner{flex-direction:column;align-items:flex-start;gap:16px;padding:24px 22px}
+  .insight-banner .ib-num{font-size:3.4rem}
+  .insight-banner .ib-cards{grid-template-columns:1fr}
+  .cta-h{font-size:1.45rem}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <a class="logo-link" href="https://newlink-group.com/es/homepage-esp/" target="_blank" rel="noopener"><div class="logo"><img src="data:image/png;base64,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" alt="Newlink" /></div></a>
+      <div class="kicker">Junio 2026</div>
+    </div>
+    <div class="mono">Mundial 2026 | Ecosistema Turístico Argentino</div>
+    <h1>Argentina no juega de local.<br><span class="y">Pero el mundo igual va a hablar de ella.</span></h1>
+    <p class="thesis">El Mundial 2026 vuelve a poner a Argentina en el centro de la conversación global, y esas conversaciones cada vez pasan más por la IA que por Google: cuando alguien pregunta qué visitar o dónde alojarse, alguna marca aparece recomendada. <b>El envión de atención abre una ventana para trabajar esa presencia en la IA, antes de que esa visibilidad se traduzca en decisiones de viaje.</b> Este reporte mide quiénes aparecen hoy y dónde está la oportunidad.</p>
+  </header>
+</div>
+
+<div class="wrap">
+
+  <!-- ANALISIS GEO -->
+  <section>
+    <div class="layer-tag"><span class="txt">GEO Check</span></div>
+    <h2>¿A quién <span class="y">recomienda</span> la IA?</h2>
+    <p class="lead">Este mapa cruza el <b>total de menciones</b> de cada marca (eje horizontal) con su <b>posición promedio</b> en las respuestas (eje vertical). El cuadrante ideal es arriba a la derecha: muy mencionada y bien posicionada.</p>
+    <div class="chart-card accent">
+      <div class="chart-note">Tocá cada categoría para ver su mapa:</div>
+      <div class="tabs" id="scatterTabs"></div>
+      <div class="prompt-bar" id="promptBar">
+        <span class="pb-label">Prompt de ranking</span>
+        <span class="pb-text" id="promptText"></span>
+      </div>
+      <div class="chart-scroll"><div class="chart-box"><canvas id="scatter"></canvas></div></div>
+      <button class="legend-toggle" id="legendToggle" aria-expanded="false">▸ Ver todas las marcas</button>
+      <div class="legend-drawer" id="legendDrawer"></div>
+      <div class="chart-method">Metodología: se analizaron 9 modelos de IA (ChatGPT, Gemini, Claude, Perplexity, Grok, Copilot, DeepSeek, AI Mode y AI Overviews) entre el 28 de mayo y el 3 de junio de 2026, con una herramienta de monitoreo propia de Newlink.</div>
+    </div>
+
+    <div class="insight-banner">
+      <div class="ib-num">4 <span>de</span> 5</div>
+      <div class="ib-body">
+        <div class="ib-lbl">Visibilidad ≠ prominencia</div>
+        <p class="ib-text">En cuatro de las cinco categorías, la marca más mencionada por la IA <b>no es la mejor posicionada</b>. Estar presente no alcanza: la recomendación se la lleva quien encabeza la lista, no quien más figura. Revertirlo es trabajo concreto, en cuatro frentes:</p>
+        <div class="ib-cards">
+          <div class="ib-card" style="border-top-color:#23DA93">
+            <div class="ic-t" style="color:#23DA93">Medios y sitios de autoridad</div>
+            <div class="ic-d">Estar presente en las fuentes que la IA cita al responder.</div>
+          </div>
+          <div class="ib-card" style="border-top-color:#0097ee">
+            <div class="ic-t" style="color:#0097ee">Contenido</div>
+            <div class="ic-d">Crear material que responda directamente esas búsquedas.</div>
+          </div>
+          <div class="ib-card" style="border-top-color:#D67BEB">
+            <div class="ic-t" style="color:#D67BEB">Redes sociales</div>
+            <div class="ic-d">Generar conversación donde los modelos la recogen.</div>
+          </div>
+          <div class="ib-card" style="border-top-color:var(--yellow)">
+            <div class="ic-t" style="color:var(--yellow)">Referentes del sector</div>
+            <div class="ic-d">Sumar menciones de voces que la IA reconoce.</div>
+          </div>
+        </div>
+        <p class="ib-foot">Y no solo diseñamos esa estrategia según lo que cada marca necesita: también la ejecutamos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CIERRE / ENFOQUE -->
+  <section>
+    <div class="layer-tag"><span class="txt">Nuestro enfoque</span></div>
+    <h2>En Newlink generamos <span class="y"><em>engagement</em></span></h2>
+    <p class="lead">Este reporte surge de una de las herramientas de inteligencia que usamos en nuestro diagnóstico <b>Orbital Check</b>. Somos una consultora de engagement — trabajamos para que las marcas conecten con las personas que realmente les importan, de forma genuina y sostenida en el tiempo, en tres dimensiones que se potencian entre sí.</p>
+    <div class="dims">
+      <details class="dim">
+        <summary><span class="dot" style="background:#23DA93"></span>Reputation</summary>
+        <p>Construimos una reputación sostenible, gestionándola como un activo financiero para proteger su valor a largo plazo y generar confianza.</p>
+      </details>
+      <details class="dim">
+        <summary><span class="dot" style="background:#0097ee"></span>Brand</summary>
+        <p>Generamos espacios de conexión que van más allá de lo transaccional, construyendo al mismo tiempo marcas conscientes y adaptativas.</p>
+      </details>
+      <details class="dim">
+        <summary><span class="dot" style="background:#D67BEB"></span>Culture</summary>
+        <p>Fortalecemos y desarrollamos la cultura organizacional. Conectamos a las personas, humanizamos las organizaciones y transformamos para generar un impacto positivo.</p>
+      </details>
+    </div>
+  </section>
+
+  <div class="cta">
+    <h2 class="cta-h">¿Te interesaría hacer un <span class="y">Orbital Check</span>?</h2>
+    <p class="cta-sub">Nos encantaría conocer tu marca y pensar juntos cómo potenciar su presencia. Dejanos tus datos y te contactamos:</p>
+    <a class="cta-btn" href="https://newlinkgroup.notion.site/13577bf755b048e6a0245a9e52dd459f?pvs=105" target="_blank" rel="noopener">Let's <em style="font-weight:800">Engage!</em></a>
+  </div>
+
+</div>
+
+<div class="wrap">
+  <footer>
+    <div class="mono">Newlink · GEO Check · Junio 2026</div>
+    <p style="margin-top:10px"><a class="foot-link" href="https://newlink-group.com/es/homepage-esp/" target="_blank" rel="noopener">newlink-group.com →</a></p>
+  </footer>
+</div>
+
+<script>
+window.ECO_DATA = {"Hoteles": {"total": 67, "significativos": 27, "lider": "LLAO LLAO RESORT GOLF SPA", "top15": [{"name": "LLAO LLAO RESORT GOLF SPA", "pos": 4.3, "app": 24}, {"name": "LOS CAUQUENES RESORT SPA", "pos": 4.7, "app": 16}, {"name": "ARAKUR USHUAIA RESORT SPA", "pos": 3.7, "app": 15}, {"name": "DESIGN SUITES BARILOCHE", "pos": 4.3, "app": 15}, {"name": "EXPLORA", "pos": 2.9, "app": 14}, {"name": "RELAIS CHATEAUX", "pos": 3.7, "app": 10}, {"name": "LAS HAYAS USHUAIA RESORT", "pos": 2.1, "app": 9}, {"name": "EOLO PATAGONIA SPIRIT", "pos": 5.1, "app": 9}, {"name": "XELENA HOTEL", "pos": 5.3, "app": 6}, {"name": "AWASI", "pos": 2.8, "app": 5}, {"name": "TREMUN HOTELES", "pos": 1.8, "app": 5}, {"name": "LOI SUITES CHAPELCO", "pos": 3.6, "app": 5}, {"name": "WYNDHAM", "pos": 5.8, "app": 5}, {"name": "HILTON", "pos": 3.3, "app": 4}, {"name": "NH HOTELS", "pos": 3.3, "app": 4}], "scatter": [{"name": "TREMUN HOTELES", "pos": 1.8, "app": 5}, {"name": "LAS HAYAS USHUAIA RESORT", "pos": 2.1, "app": 9}, {"name": "AWASI", "pos": 2.8, "app": 5}, {"name": "EXPLORA", "pos": 2.9, "app": 14}, {"name": "RADISSON HOTELS", "pos": 3.0, "app": 3}, {"name": "NH HOTELS", "pos": 3.3, "app": 4}, {"name": "HILTON", "pos": 3.3, "app": 4}, {"name": "LOI SUITES CHAPELCO", "pos": 3.6, "app": 5}, {"name": "ARAKUR USHUAIA RESORT SPA", "pos": 3.7, "app": 15}, {"name": "RELAIS CHATEAUX", "pos": 3.7, "app": 10}, {"name": "HAMPTON BY HILTON BARILOCHE", "pos": 4.0, "app": 3}, {"name": "LLAO LLAO RESORT GOLF SPA", "pos": 4.3, "app": 24}, {"name": "DESIGN HOTELS", "pos": 4.3, "app": 3}, {"name": "DESIGN SUITES BARILOCHE", "pos": 4.3, "app": 15}, {"name": "CORRENTOSO LAKE RIVER HOTEL", "pos": 4.7, "app": 3}, {"name": "DESTINO SUR", "pos": 4.7, "app": 3}, {"name": "LOS CAUQUENES RESORT SPA", "pos": 4.7, "app": 16}, {"name": "CALAFATE PARQUE HOTEL", "pos": 4.8, "app": 4}, {"name": "CHOICE HOTELS", "pos": 5.0, "app": 3}, {"name": "EOLO PATAGONIA SPIRIT", "pos": 5.1, "app": 9}, {"name": "PATAGONIAN GROUP", "pos": 5.3, "app": 3}, {"name": "XELENA HOTEL", "pos": 5.3, "app": 6}, {"name": "LOS PONCHOS", "pos": 5.3, "app": 3}, {"name": "LIROLAY SUITES", "pos": 5.7, "app": 3}, {"name": "WYNDHAM", "pos": 5.8, "app": 5}, {"name": "ALTO CALAFATE", "pos": 6.5, "app": 4}, {"name": "LOS CERROS", "pos": 6.5, "app": 4}]}, "Destinos": {"total": 43, "significativos": 27, "lider": "CATARATAS DEL IGUAZU", "top15": [{"name": "CATARATAS DEL IGUAZU", "pos": 6.3, "app": 40}, {"name": "VISIT BUENOS AIRES", "pos": 7.7, "app": 38}, {"name": "BARILOCHE", "pos": 4.0, "app": 38}, {"name": "EL CALAFATE", "pos": 2.6, "app": 36}, {"name": "MENDOZA", "pos": 8.6, "app": 36}, {"name": "EL CHALTEN", "pos": 5.4, "app": 30}, {"name": "QUEBRADA DE HUMAHUACA", "pos": 7.7, "app": 30}, {"name": "USHUAIA", "pos": 5.9, "app": 29}, {"name": "SALTA CAPITAL", "pos": 6.7, "app": 27}, {"name": "GLACIAR PERITO MORENO", "pos": 3.9, "app": 24}, {"name": "JUJUY", "pos": 7.3, "app": 23}, {"name": "CAFAYATE", "pos": 8.9, "app": 19}, {"name": "PENINSULA VALDES", "pos": 11.7, "app": 17}, {"name": "PURMAMARCA", "pos": 7.8, "app": 16}, {"name": "CORDOBA", "pos": 11.3, "app": 15}], "scatter": [{"name": "EL CALAFATE", "pos": 2.6, "app": 36}, {"name": "GLACIAR PERITO MORENO", "pos": 3.9, "app": 24}, {"name": "BARILOCHE", "pos": 4.0, "app": 38}, {"name": "EL CHALTEN", "pos": 5.4, "app": 30}, {"name": "USHUAIA", "pos": 5.9, "app": 29}, {"name": "CATARATAS DEL IGUAZU", "pos": 6.3, "app": 40}, {"name": "SALTA CAPITAL", "pos": 6.7, "app": 27}, {"name": "JUJUY", "pos": 7.3, "app": 23}, {"name": "QUEBRADA DE HUMAHUACA", "pos": 7.7, "app": 30}, {"name": "VISIT BUENOS AIRES", "pos": 7.7, "app": 38}, {"name": "PURMAMARCA", "pos": 7.8, "app": 16}, {"name": "TILCARA", "pos": 8.3, "app": 3}, {"name": "SAN MARTIN DE LOS ANDES", "pos": 8.5, "app": 13}, {"name": "PUERTO IGUAZU", "pos": 8.5, "app": 4}, {"name": "MENDOZA", "pos": 8.6, "app": 36}, {"name": "VILLA LA ANGOSTURA", "pos": 8.7, "app": 6}, {"name": "CAFAYATE", "pos": 8.9, "app": 19}, {"name": "ROSARIO", "pos": 9.7, "app": 3}, {"name": "SALINAS GRANDES", "pos": 9.7, "app": 10}, {"name": "PUERTO MADRYN", "pos": 10.4, "app": 14}, {"name": "CORDOBA", "pos": 11.3, "app": 15}, {"name": "PENINSULA VALDES", "pos": 11.7, "app": 17}, {"name": "MAR DEL PLATA", "pos": 13.4, "app": 10}, {"name": "ESTEROS DEL IBERA", "pos": 14.0, "app": 11}, {"name": "PINAMAR", "pos": 14.0, "app": 9}, {"name": "TAFI DEL VALLE", "pos": 14.7, "app": 3}, {"name": "VILLA GESELL", "pos": 15.4, "app": 5}]}, "Bodegas y Vinos": {"total": 96, "significativos": 40, "lider": "ZUCCARDI VALLE DE UCO", "top15": [{"name": "ZUCCARDI VALLE DE UCO", "pos": 3.0, "app": 40}, {"name": "CATENA ZAPATA", "pos": 1.2, "app": 39}, {"name": "EL ENEMIGO", "pos": 4.8, "app": 31}, {"name": "RUTINI WINES", "pos": 5.0, "app": 26}, {"name": "LUIGI BOSCA", "pos": 5.7, "app": 26}, {"name": "TRAPICHE", "pos": 6.0, "app": 26}, {"name": "NORTON", "pos": 7.0, "app": 21}, {"name": "ACHAVAL FERRER", "pos": 5.0, "app": 19}, {"name": "ALAMOS", "pos": 8.3, "app": 14}, {"name": "ALTOS LAS HORMIGAS", "pos": 8.3, "app": 12}, {"name": "SALENTEIN", "pos": 8.3, "app": 12}, {"name": "TRUMPETER", "pos": 7.3, "app": 12}, {"name": "LAGARDE", "pos": 7.6, "app": 12}, {"name": "MATIAS RICCITELLI", "pos": 8.3, "app": 11}, {"name": "KAIKEN", "pos": 8.7, "app": 11}], "scatter": [{"name": "CATENA ZAPATA", "pos": 1.2, "app": 39}, {"name": "ZUCCARDI VALLE DE UCO", "pos": 3.0, "app": 40}, {"name": "EL ENEMIGO", "pos": 4.8, "app": 31}, {"name": "ACHAVAL FERRER", "pos": 5.0, "app": 19}, {"name": "RUTINI WINES", "pos": 5.0, "app": 26}, {"name": "DV CATENA", "pos": 5.0, "app": 7}, {"name": "ALFA CRUX", "pos": 5.0, "app": 3}, {"name": "LUIGI BOSCA", "pos": 5.7, "app": 26}, {"name": "TRAPICHE", "pos": 6.0, "app": 26}, {"name": "BODEGA LOS TONELES", "pos": 6.8, "app": 4}, {"name": "NORTON", "pos": 7.0, "app": 21}, {"name": "SUSANA BALBO", "pos": 7.0, "app": 8}, {"name": "CHEVAL DES ANDES", "pos": 7.0, "app": 4}, {"name": "VALENTIN BIANCHI", "pos": 7.0, "app": 3}, {"name": "ESCORIHUELA GASCON", "pos": 7.3, "app": 4}, {"name": "TRUMPETER", "pos": 7.3, "app": 12}, {"name": "DURIGUTTI FAMILY WINEMAKERS", "pos": 7.3, "app": 3}, {"name": "BODEGAS LOPEZ", "pos": 7.5, "app": 4}, {"name": "LAGARDE", "pos": 7.6, "app": 12}, {"name": "VINA COBOS", "pos": 7.9, "app": 8}, {"name": "TRIVENTO", "pos": 8.0, "app": 7}, {"name": "SALENTEIN", "pos": 8.3, "app": 12}, {"name": "ALTOS LAS HORMIGAS", "pos": 8.3, "app": 12}, {"name": "MATIAS RICCITELLI", "pos": 8.3, "app": 11}, {"name": "ALAMOS", "pos": 8.3, "app": 14}, {"name": "KAIKEN", "pos": 8.7, "app": 11}, {"name": "SANTA JULIA", "pos": 8.8, "app": 8}, {"name": "TERRAZAS DE LOS ANDES", "pos": 9.1, "app": 10}, {"name": "NIETO SENETINER", "pos": 10.2, "app": 6}, {"name": "BODEGAS CHANDON", "pos": 10.8, "app": 4}, {"name": "SUPER UCO", "pos": 11.0, "app": 5}, {"name": "BODEGA BRESSIA", "pos": 11.0, "app": 3}, {"name": "CORAZON DEL SOL", "pos": 11.0, "app": 3}, {"name": "BODEGA CHACRA", "pos": 11.3, "app": 4}, {"name": "EL PORVENIR DE CAFAYATE", "pos": 11.3, "app": 4}, {"name": "DANTE ROBINO", "pos": 11.7, "app": 3}, {"name": "MENDEL", "pos": 12.0, "app": 4}, {"name": "DONA PAULA", "pos": 12.0, "app": 3}, {"name": "BODEGA ANDELUNA", "pos": 12.3, "app": 4}, {"name": "LA AZUL", "pos": 12.5, "app": 4}]}, "Gastronomía": {"total": 76, "significativos": 25, "lider": "DON JULIO", "top15": [{"name": "DON JULIO", "pos": 1.0, "app": 37}, {"name": "EL PREFERIDO DE PALERMO", "pos": 3.9, "app": 22}, {"name": "LA CABRERA", "pos": 3.0, "app": 20}, {"name": "ARAMBURU", "pos": 3.7, "app": 13}, {"name": "FOGON ASADO", "pos": 3.0, "app": 13}, {"name": "EL CUARTITO", "pos": 6.0, "app": 11}, {"name": "SARKIS", "pos": 4.6, "app": 8}, {"name": "PIZZERIA GUERRIN", "pos": 6.4, "app": 8}, {"name": "ANCHOITA", "pos": 3.9, "app": 7}, {"name": "TEGUI", "pos": 2.9, "app": 7}, {"name": "TRESCHA", "pos": 4.1, "app": 7}, {"name": "MISHIGUENE", "pos": 5.5, "app": 6}, {"name": "CRIZIA", "pos": 3.4, "app": 5}, {"name": "GRAN DABBANG", "pos": 4.4, "app": 5}, {"name": "ROUX", "pos": 5.6, "app": 5}], "scatter": [{"name": "DON JULIO", "pos": 1.0, "app": 37}, {"name": "TEGUI", "pos": 2.9, "app": 7}, {"name": "LA CABRERA", "pos": 3.0, "app": 20}, {"name": "FOGON ASADO", "pos": 3.0, "app": 13}, {"name": "CRIZIA", "pos": 3.4, "app": 5}, {"name": "ARAMBURU", "pos": 3.7, "app": 13}, {"name": "ANCHOITA", "pos": 3.9, "app": 7}, {"name": "EL PREFERIDO DE PALERMO", "pos": 3.9, "app": 22}, {"name": "FERROVIARIO", "pos": 4.0, "app": 3}, {"name": "TRESCHA", "pos": 4.1, "app": 7}, {"name": "ELENA", "pos": 4.4, "app": 5}, {"name": "GRAN DABBANG", "pos": 4.4, "app": 5}, {"name": "SARKIS", "pos": 4.6, "app": 8}, {"name": "EL MERCADO", "pos": 5.0, "app": 3}, {"name": "EL SANJUANINO", "pos": 5.0, "app": 3}, {"name": "FOUR SEASONS", "pos": 5.3, "app": 3}, {"name": "MISHIGUENE", "pos": 5.5, "app": 6}, {"name": "NINO GORDO", "pos": 5.5, "app": 4}, {"name": "ROUX", "pos": 5.6, "app": 5}, {"name": "EL CUARTITO", "pos": 6.0, "app": 11}, {"name": "LA ALACENA TRATTORIA", "pos": 6.3, "app": 3}, {"name": "JULIA", "pos": 6.3, "app": 3}, {"name": "PIZZERIA GUERRIN", "pos": 6.4, "app": 8}, {"name": "PUERTO CRISTAL", "pos": 6.7, "app": 3}, {"name": "CHUI", "pos": 7.5, "app": 4}]}, "Plataformas de Viaje": {"total": 36, "significativos": 16, "lider": "SKYSCANNER", "top15": [{"name": "SKYSCANNER", "pos": 3.6, "app": 34}, {"name": "AEROLINEAS ARGENTINAS", "pos": 5.1, "app": 33}, {"name": "DESPEGAR", "pos": 2.5, "app": 32}, {"name": "GOOGLE FLIGHTS", "pos": 3.7, "app": 30}, {"name": "JETSMART", "pos": 6.3, "app": 28}, {"name": "FLYBONDI", "pos": 6.1, "app": 24}, {"name": "ALMUNDO", "pos": 4.3, "app": 23}, {"name": "KAYAK", "pos": 4.1, "app": 22}, {"name": "TURISMOCITY", "pos": 2.6, "app": 20}, {"name": "BOOKING COM", "pos": 4.4, "app": 9}, {"name": "LATAM AIRLINES", "pos": 6.8, "app": 4}, {"name": "ATRAPALO", "pos": 6.3, "app": 4}, {"name": "TICKETS AR", "pos": 1.7, "app": 3}, {"name": "EDREAMS ARGENTINA", "pos": 5.3, "app": 3}, {"name": "AIRBNB", "pos": 6.0, "app": 3}], "scatter": [{"name": "TICKETS AR", "pos": 1.7, "app": 3}, {"name": "DESPEGAR", "pos": 2.5, "app": 32}, {"name": "TURISMOCITY", "pos": 2.6, "app": 20}, {"name": "SKYSCANNER", "pos": 3.6, "app": 34}, {"name": "GOOGLE FLIGHTS", "pos": 3.7, "app": 30}, {"name": "KAYAK", "pos": 4.1, "app": 22}, {"name": "ALMUNDO", "pos": 4.3, "app": 23}, {"name": "BOOKING COM", "pos": 4.4, "app": 9}, {"name": "AEROLINEAS ARGENTINAS", "pos": 5.1, "app": 33}, {"name": "EDREAMS ARGENTINA", "pos": 5.3, "app": 3}, {"name": "AIRBNB", "pos": 6.0, "app": 3}, {"name": "FLYBONDI", "pos": 6.1, "app": 24}, {"name": "ATRAPALO", "pos": 6.3, "app": 4}, {"name": "JETSMART", "pos": 6.3, "app": 28}, {"name": "LATAM AIRLINES", "pos": 6.8, "app": 4}, {"name": "EXPEDIA", "pos": 7.7, "app": 3}]}};
+
+</script>
+<script>
+const D = window.ECO_DATA;
+// orden y etiquetas con lenguaje del modelo
+const VLABEL = {"Destinos":"🗺️ Destino","Hoteles":"🏨 Alojamiento","Bodegas y Vinos":"🍷 Bodegas","Gastronomía":"🍴 Gastronomía","Plataformas de Viaje":"📱 Plataformas"};
+const VPROMPT = {
+  "Destinos":"¿Qué destinos de Argentina me recomendás visitar?",
+  "Hoteles":"¿En qué cadena de hoteles me recomendás alojarme en la Patagonia Argentina?",
+  "Bodegas y Vinos":"¿Qué marcas de vino tomar en Mendoza?",
+  "Gastronomía":"¿Qué restaurante de Buenos Aires me recomendás?",
+  "Plataformas de Viaje":"¿Qué plataforma uso para reservar vuelos en Argentina?"
+};
+const ORDER = ["Destinos","Hoteles","Bodegas y Vinos","Gastronomía","Plataformas de Viaje"];
+const CATS = ORDER.filter(c=>D[c]);
+const YELLOW='#FFDD00',INK='#f5f3ea',MUTED='#9a978d',GRID='#2a2a2e',POS_GOOD='#FFDD00',POS_MID='#8f8a72',POS_LOW='#54525a';
+Chart.defaults.font.family="'Effra','Hanken Grotesk',sans-serif";Chart.defaults.color=MUTED;
+
+let scatterChart, currentCat;
+function drawScatter(cat){
+  currentCat = cat;
+  document.getElementById('promptText').textContent = VPROMPT[cat] || '';
+  const d=D[cat],maxApp=Math.max(...d.scatter.map(x=>x.app)),leaderName=d.top15[0].name;
+  const pts=d.scatter.map(x=>({x:x.app,y:x.pos,name:x.name,isLeader:(x.name===leaderName)}));
+  // numerar igual que el listado: orden por menciones (desc), desempata por mejor posición
+  const rank=[...pts].sort((a,b)=> b.x-a.x || a.y-b.y);
+  rank.forEach((p,i)=>{p.num=i+1;});
+  const ds=[{data:pts,parsing:false,
+    pointRadius:pts.map(p=>p.isLeader?12:9),pointHoverRadius:pts.map(p=>p.isLeader?15:12),
+    backgroundColor:pts.map(p=>p.isLeader?YELLOW:'rgba(180,176,160,.45)'),
+    borderColor:pts.map(p=>p.isLeader?'#fff':'rgba(180,176,160,.8)'),borderWidth:pts.map(p=>p.isLeader?2:1)}];
+  if(scatterChart)scatterChart.destroy();
+  scatterChart=new Chart(document.getElementById('scatter'),{type:'scatter',data:{datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:10,right:24}},
+      scales:{x:{title:{display:true,text:'MENCIONES  →  más visible',font:{size:11,weight:700},color:INK},grid:{color:GRID},min:0,max:maxApp+4,ticks:{precision:0,color:MUTED}},
+        y:{title:{display:true,text:'POSICIÓN PROMEDIO · mejor →',font:{size:11,weight:700},color:INK},reverse:true,grid:{color:GRID},min:0,suggestedMax:Math.max(...d.scatter.map(x=>x.pos))+1,ticks:{color:MUTED}}},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#000',borderColor:YELLOW,borderWidth:1,padding:12,titleColor:YELLOW,titleFont:{size:14,weight:700},bodyColor:INK,
+        callbacks:{title:c=>c[0].raw.name,label:c=>['Menciones: '+c.raw.x,'Posición prom.: '+c.raw.y]}}}},
+    plugins:[{id:'lbl',afterDatasetsDraw(chart){const {ctx}=chart,meta=chart.getDatasetMeta(0);ctx.save();
+      pts.forEach((p,i)=>{const el=meta.data[i];
+        // número dentro del punto
+        ctx.font="700 9px 'Hanken Grotesk'";ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillStyle=p.isLeader?'#0e0e10':'#0e0e10';
+        ctx.fillText(p.num,el.x,el.y);
+        // nombre al lado, solo líder y más mencionadas
+        if(p.isLeader||p.x>=(maxApp*0.55)){ctx.textAlign='left';ctx.textBaseline='alphabetic';
+          ctx.fillStyle=p.isLeader?YELLOW:'#cbc8bd';
+          ctx.font=p.isLeader?"700 12px 'Hanken Grotesk'":"400 10.5px 'Hanken Grotesk'";
+          let nm=p.name.length>22?p.name.slice(0,20)+'…':p.name;ctx.fillText(nm,el.x+(p.isLeader?15:12),el.y+4);}
+      });ctx.restore();}}]});
+  // poblar el drawer (todas las marcas, ordenadas por menciones)
+  const dr=document.getElementById('legendDrawer');
+  if(dr){
+    const ordered=[...pts].sort((a,b)=> b.x-a.x || a.y-b.y);
+    let html='<div class="lp-head">'+ordered.length+' marcas · ordenadas por menciones</div>';
+    ordered.forEach((p)=>{
+      html+=`<div class="lp-item${p.isLeader?' leader':''}">
+        <span class="lp-num">${p.num}</span>
+        <span class="lp-name">${p.name}</span>
+        <span class="lp-pos">${p.x}m · ${p.y}</span>
+      </div>`;
+    });
+    dr.innerHTML=html;
+  }
+}
+function buildTabs(id,cb){const c=document.getElementById(id);c.innerHTML='';
+  CATS.forEach((cat,i)=>{const b=document.createElement('button');b.className='tab'+(i===0?' active':'');b.textContent=VLABEL[cat]||cat;
+    b.onclick=()=>{[...c.children].forEach(x=>x.classList.remove('active'));b.classList.add('active');cb(cat);};c.appendChild(b);});}
+buildTabs('scatterTabs',drawScatter);drawScatter(CATS[0]);
+
+// toggle del drawer de marcas
+(function(){
+  const btn=document.getElementById('legendToggle'), dr=document.getElementById('legendDrawer');
+  if(!btn||!dr) return;
+  btn.addEventListener('click',()=>{
+    const open=dr.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open?'true':'false');
+    btn.textContent = open ? '▾ Ocultar marcas' : '▸ Ver todas las marcas';
+  });
+})();
+
+</script>
+</body>
+</html>
